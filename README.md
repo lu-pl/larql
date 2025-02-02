@@ -13,9 +13,10 @@ Apart from parsing SPARQL strings into Lark parse trees, the only additional fea
 #### Usage
 
 ```python
-from larql import sparql_parser
+from larql import SPARQLParser
 
-parsed = sparql_parser("select * where {?s ?p ?o .}")
+parsed = SPARQLParser("select * where {?s ?p ?o .}")
+parsed.tree  # lark.Tree
 
 # not yet available
 parsed.serialize(indent=2)
