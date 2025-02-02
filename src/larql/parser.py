@@ -11,7 +11,7 @@ _package_path = Path(files("larql"))  # type: ignore
 _grammar_file = _package_path / "sparql.lark"
 
 _grammar = _grammar_file.read_text(encoding="utf-8")
-sparql_parser = lark.Lark(_grammar, start="query_unit")
+sparql_parser = lark.Lark(_grammar)
 
 
 class SPARQLParser:
