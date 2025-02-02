@@ -1,6 +1,7 @@
-COMMENT: /#[^\n]*/
 %ignore COMMENT
 %ignore WS
+
+start: query_unit | update_unit
 
 query_unit : query 
 query : prologue ( select_query | construct_query | describe_query | ask_query ) values_clause
@@ -279,3 +280,4 @@ PLX: PERCENT | PN_LOCAL_ESC
 PERCENT: "%" HEX HEX
 HEX: /[0-9A-Fa-f]/
 PN_LOCAL_ESC: "\\" /[_~\.\-!$&'()*+,;=\/?#@%]/
+COMMENT: /#[^\n]*/
