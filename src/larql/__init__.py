@@ -1,1 +1,1 @@
-from larql.parser import sparql_parser  # noqa: F401
+from larql.parser import SPARQLParser, sparql_parser  # noqa: F401
