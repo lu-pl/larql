@@ -1,7 +1,6 @@
 """Test utility for rdf-test syntax test discovery."""
 
 from collections.abc import Iterator
-from importlib.resources import files
 from itertools import chain
 from pathlib import Path
 from string import Template
@@ -12,10 +11,9 @@ from rdflib import Graph
 
 
 class SPARQL11SyntaxTestDiscovery:
-    def __init__(self, test_dir: Path | None = None):
-        self.test_dir = Path("larql/tests/rdf-tests")
-        self._manifest_all_file = (
-            self.test_dir.joinpath("sparql/sparql11") / "manifest-all.ttl"
+    def __init__(self):
+        self._manifest_all_file = Path(
+            "larql/tests/rdf-tests/sparql/sparql11/manifest-all.ttl"
         )
 
     def _get_syntax_manifests(self) -> Iterator:
