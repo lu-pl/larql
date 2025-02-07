@@ -46,13 +46,13 @@ update1 : load | clear | drop | add | move | copy | create | insert_data | delet
 load : "LOAD"i "SILENT"i? iri ( "INTO"i graph_ref )?
 clear : "CLEAR"i "SILENT"i? graph_ref_all
 drop : "DROP"i "SILENT"i? graph_ref_all
-create : "CLEAR"i "SILENT"i? graph_ref_all
+create : "CREATE"i "SILENT"i? graph_ref
 add : "ADD"i "SILENT"i? graph_or_default "TO"i graph_or_default
 move : "MOVE"i "SILENT"i? graph_or_default "TO"i graph_or_default
 copy :"COPY"i "SILENT"i? graph_or_default "TO"i graph_or_default
-insert_data : "INSERT DATA"i quad_data
-delete_data : "DELETE DATA"i quad_data
-delete_where : "DELETE WHERE"i quad_pattern
+insert_data : "INSERT"i "DATA"i quad_data
+delete_data : "DELETE"i "DATA"i quad_data
+delete_where : "DELETE"i "WHERE"i quad_pattern
 modify : ( "WITH"i iri )? ( delete_clause insert_clause? | insert_clause ) using_clause* "WHERE"i group_graph_pattern
 
 delete_clause : "DELETE"i quad_pattern
@@ -247,8 +247,8 @@ VAR1 : "?" VARNAME
 VAR2 : "$" VARNAME
 LANGTAG: "@" /[a-zA-Z]+(-[a-zA-Z0-9]+)*/
 INTEGER : /[0-9]+/
-DECIMAL : /[0-9]* '.' [0-9]+/
-DOUBLE:  /[0-9]+/ "." /[0-9]*/ EXPONENT | "." (/[0-9]/)+ EXPONENT | (/[0-9]/)+ EXPONENT
+DECIMAL : /[0-9]+\.[0-9]+/
+DOUBLE : /[0-9]+\.[0-9]+/ EXPONENT?  | /[0-9]+/ EXPONENT
 INTEGER_POSITIVE : "+" INTEGER
 DECIMAL_POSITIVE : "+" DECIMAL
 DOUBLE_POSITIVE : "+" DOUBLE
