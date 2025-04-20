@@ -2,9 +2,9 @@
 
 from pathlib import Path
 
-from larql import SPARQLParser, sparql_parser
 import pytest
 
+from larql import SPARQLParser
 from tests.discovery import SPARQL11SyntaxTestDiscovery
 
 
@@ -16,5 +16,4 @@ def test_positive_query_parsing(test_query_path):
     _query_file_path: Path = Path(test_query_path)
     query = _query_file_path.read_text()
 
-    assert sparql_parser.parse(query)
     assert SPARQLParser(query)
