@@ -4,7 +4,7 @@ from importlib.resources import files
 from pathlib import Path
 
 import lark
-from larql.utils.validators import UnicodeValidator
+from larql.utils.validators import InsertDeleteQuadValidator, UnicodeValidator
 
 
 _package_path = Path(files("larql"))  # type: ignore
@@ -19,7 +19,11 @@ class SPARQLParser:
         self.query = query
         self.tree: lark.Tree = sparql_parser.parse(self.query)
 
-        self._run_validators(UnicodeValidator())
+        self._run_validators(
+            # UnicodeValidator might be useless; UTF-8 should already be checked in the grammar now
+            UnicodeValidator(),
+            InsertDeleteQuadValidator(),
+        )
 
     def _run_validators(self, *validators: lark.Visitor):
         """Run validators against the Tree component."""
