@@ -23,4 +23,5 @@ dev = [
     "devtools>=0.12.2",
     "pytest>=8.3.4",
     "rdflib>=7.1.3",
+    "sparqlx>=0.10.0",
 ]
