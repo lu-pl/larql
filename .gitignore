@@ -12,3 +12,5 @@ wheels/
 # my files
 scratch.py
 notes.org
+
+.direnv
