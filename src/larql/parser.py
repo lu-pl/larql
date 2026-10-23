@@ -1,34 +1,25 @@
-"""Lark interface for the SPARQL 1.1 grammar."""
-
+import textwrap
 from importlib.resources import files
-from pathlib import Path
 
 import lark
-from larql.utils.validators import InsertDeleteQuadValidator, UnicodeValidator
 
-
-_package_path = Path(files("larql"))  # type: ignore
-_grammar_file = _package_path / "sparql.lark"
-
-_grammar = _grammar_file.read_text(encoding="utf-8")
-sparql_parser = lark.Lark(_grammar)
+_grammar: str = (files("larql") / "sparql12.lark").read_text()
+_lark_parser = lark.Lark(
+    _grammar,
+    parser="lalr",
+    lexer="basic",
+    keep_all_tokens=True,
+)
 
 
 class SPARQLParser:
-    def __init__(self, query: str) -> None:
-        self.query = query
-        self.tree: lark.Tree = sparql_parser.parse(self.query)
+    def __init__(self, sparql: str) -> None:
+        self._sparql = sparql
+        self._tree = _lark_parser.parse(sparql)
 
-        self._run_validators(
-            # UnicodeValidator might be useless; UTF-8 should already be checked in the grammar now
-            UnicodeValidator(),
-            InsertDeleteQuadValidator(),
-        )
+    def __repr__(self) -> str:
+        indented_sparql: str = textwrap.indent(self._sparql.strip(), "  ")
+        return f"{type(self).__name__}(\n{indented_sparql}\n)"
 
-    def _run_validators(self, *validators: lark.Visitor):
-        """Run validators against the Tree component."""
-        for validator in validators:
-            validator.visit(self.tree)
-
-    def serialize(self):
-        """Run a lark.Transformer for SPARQL serialization."""
+    def serialize(self) -> str:
+        raise NotImplementedError
