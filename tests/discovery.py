@@ -1,15 +1,16 @@
 from collections.abc import Iterable, Iterator
-from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
 from urllib.parse import urlparse
 
+from pydantic import BaseModel, ConfigDict
 from rdflib import Graph, URIRef
 from sparqlx import SPARQLWrapper
 
 
-@dataclass
-class SyntaxTestInfo:
+class SyntaxTestInfo(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     test_id: URIRef
     test_path: Path
     valid: bool
@@ -59,7 +60,7 @@ class SyntaxTestDiscovery(Iterable[SyntaxTestInfo]):
 
         select ?test_id ?test_path_uri ?valid
         where {
-          values (?test_type ?validity) {
+          values (?test_type ?valid) {
             (mf:PositiveSyntaxTest         true)
             (mf:PositiveUpdateSyntaxTest   true)
             (mf:PositiveSyntaxTest11       true)
