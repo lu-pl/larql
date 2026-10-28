@@ -1,4 +1,4 @@
-name: W3C SPARQL 1.1
+name: W3C Tests
 
 on:
   push:
