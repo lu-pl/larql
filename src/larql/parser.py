@@ -9,6 +9,7 @@ _lark_parser = lark.Lark(
     parser="lalr",
     lexer="basic",
     keep_all_tokens=True,
+    propagate_positions=True,
 )
 
 
