@@ -3,6 +3,9 @@ from importlib.resources import files
 
 import lark
 
+from larql.validators.dispatcher import SemanticConstraintValidator
+from larql.validators.values_clause import ValuesClauseValidator
+
 _grammar: str = (files("larql") / "sparql12.lark").read_text()
 _lark_parser = lark.Lark(
     _grammar,
@@ -11,12 +14,13 @@ _lark_parser = lark.Lark(
     keep_all_tokens=True,
     propagate_positions=True,
 )
+_validator = SemanticConstraintValidator(ValuesClauseValidator())
 
 
 class SPARQLParser:
     def __init__(self, sparql: str) -> None:
         self._sparql = sparql
-        self._tree = _lark_parser.parse(sparql)
+        self._tree = _validator.visit(tree=_lark_parser.parse(sparql))
 
     def __repr__(self) -> str:
         indented_sparql: str = textwrap.indent(self._sparql.strip(), "  ")
