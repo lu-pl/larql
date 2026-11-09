@@ -2,7 +2,7 @@ from typing import NamedTuple
 
 import pytest
 
-from larql import SPARQLParser
+from larql import parse
 from larql.exceptions import ValuesClauseError
 
 
@@ -98,10 +98,10 @@ invalid_params: list[ValuesClauseTestParameter] = [
 
 @pytest.mark.parametrize("param", valid_params)
 def test_values_clause_validator(param: ValuesClauseTestParameter) -> None:
-    SPARQLParser(sparql=param.query)
+    parse(sparql=param.query)
 
 
 @pytest.mark.parametrize("param", invalid_params)
 def test_values_clause_validator_sad_path(param: ValuesClauseTestParameter) -> None:
     with pytest.raises(ValuesClauseError):
-        SPARQLParser(sparql=param.query)
+        parse(sparql=param.query)

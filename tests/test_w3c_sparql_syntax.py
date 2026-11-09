@@ -3,7 +3,7 @@ from pathlib import Path
 
 import lark.exceptions
 import pytest
-from larql import SPARQLParser
+from larql import parse
 
 from tests.discovery import SyntaxTestDiscovery, SyntaxTestInfo
 
@@ -20,9 +20,9 @@ from tests.discovery import SyntaxTestDiscovery, SyntaxTestInfo
 def test_w3c_sparql_syntax_tests(test_info: SyntaxTestInfo):
     match test_info.valid:
         case True:
-            SPARQLParser(sparql=test_info.test_path.read_text())
+            parse(sparql=test_info.test_path.read_text())
         case False:
             with pytest.raises(lark.exceptions.LarkError):
-                SPARQLParser(sparql=test_info.test_path.read_text())
+                parse(sparql=test_info.test_path.read_text())
         case _:
             assert False, "this should never happen"
