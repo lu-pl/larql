@@ -16,7 +16,7 @@ class SupportsVisit(Protocol):
     def visit(self, tree: lark.Tree) -> object: ...
 
 
-class SemanticConstraintValidator(SupportsVisit):
+class ConstraintValidator(SupportsVisit):
     """Dispatcher for running validators over a parse tree.
 
     Note that validators run in the given order and each one traverses the tree;
