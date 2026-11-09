@@ -1,4 +1,3 @@
-import textwrap
 from importlib.resources import files
 
 import lark
@@ -17,14 +16,14 @@ _lark_parser = lark.Lark(
 _validator = SemanticConstraintValidator(ValuesClauseValidator())
 
 
-class SPARQLParser:
-    def __init__(self, sparql: str) -> None:
-        self._sparql = sparql
-        self._tree = _validator.visit(tree=_lark_parser.parse(sparql))
+def parse(sparql: str) -> lark.Tree:
+    """Parse a SPARQL 1.2 string into a Lark parse tree.
 
-    def __repr__(self) -> str:
-        indented_sparql: str = textwrap.indent(self._sparql.strip(), "  ")
-        return f"{type(self).__name__}(\n{indented_sparql}\n)"
+    The string is first parsed against the SPARQL 1.2 grammar and the resulting tree
+    is then checked for semantic constraints the grammar cannot (easily) express.
 
-    def serialize(self) -> str:
-        raise NotImplementedError
+    Note that all failures raise a `lark.exceptions.LarkError` subclass: grammar
+    violations raise Lark's own exceptions, semantic violations raise
+    `larql.exceptions.SemanticConstraintError` subclasses.
+    """
+    return _validator.visit(tree=_lark_parser.parse(sparql))
