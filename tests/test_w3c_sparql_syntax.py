@@ -1,9 +1,8 @@
 import itertools
 from pathlib import Path
 
-import lark.exceptions
 import pytest
-from larql import parse
+from larql import LarqlError, parse
 
 from tests.discovery import SyntaxTestDiscovery, SyntaxTestInfo
 
@@ -22,7 +21,7 @@ def test_w3c_sparql_syntax_tests(test_info: SyntaxTestInfo):
         case True:
             parse(sparql=test_info.test_path.read_text())
         case False:
-            with pytest.raises(lark.exceptions.LarkError):
+            with pytest.raises(LarqlError):
                 parse(sparql=test_info.test_path.read_text())
         case _:
             assert False, "this should never happen"
