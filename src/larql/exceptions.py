@@ -36,3 +36,7 @@ class SPARQLConstraintError(LarqlError):
 
 class ValuesClauseError(SPARQLConstraintError):
     """Exception for indicating duplicate variables or row arity mismatches in VALUES clauses."""
+
+
+class CodepointEscapeError(SPARQLConstraintError):
+    """Exception for indicating numeric escape sequences that don't produce Unicode scalar values."""
