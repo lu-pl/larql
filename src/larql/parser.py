@@ -3,6 +3,7 @@ from importlib.resources import files
 import lark
 
 from larql.exceptions import SPARQLSyntaxError
+from larql.validators.codepoint_escapes import CodepointEscapeValidator
 from larql.validators.dispatcher import ConstraintValidator
 from larql.validators.values_clause import ValuesClauseValidator
 
@@ -14,7 +15,7 @@ _lark_parser = lark.Lark(
     keep_all_tokens=True,
     propagate_positions=True,
 )
-_validator = ConstraintValidator(ValuesClauseValidator())
+_validator = ConstraintValidator(ValuesClauseValidator(), CodepointEscapeValidator())
 
 
 def parse(sparql: str) -> lark.Tree:
