@@ -12,6 +12,7 @@ lark.exceptions.LarkError
         │   ├── ValuesDuplicateVariableError(line, column, duplicates)
         │   └── ValuesRowArityError(line, column, expected, got)
         ├── CodepointEscapeError(line, column, escape)
+        ├── AnnotatedPathError(line, column)
         └── ...
 
 Generally, subclasses take structured parameters, pass them unchanged
@@ -117,4 +118,22 @@ class CodepointEscapeError(SPARQLConstraintError):
             "(U+0000 to U+D7FF or U+E000 to U+10FFFF) "
             f"at line {self.line}, column {self.column}. "
             f"Got '{self.escape}'."
+        )
+
+
+class AnnotatedPathError(SPARQLConstraintError):
+    """Exception for indicating reifiers or annotation blocks after complex property paths."""
+
+    def __init__(self, line: int, column: int) -> None:
+        self.line = line
+        self.column = column
+
+        super().__init__(line, column)
+
+    def __str__(self) -> str:
+        return (
+            "Expected a simple path (an IRI, 'a' or a variable) "
+            "as property of an annotated triple "
+            f"at line {self.line}, column {self.column}. "
+            "Got a path expression."
         )
