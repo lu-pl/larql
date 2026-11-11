@@ -2,8 +2,7 @@ from typing import NamedTuple
 
 import pytest
 
-from larql import parse
-from larql.exceptions import CodepointEscapeError
+from larql import CodepointEscapeError, parse
 
 
 class CodepointEscapeTestParameter(NamedTuple):
