@@ -4,7 +4,7 @@ from collections.abc import Iterator
 
 import lark
 
-from larql.exceptions import ValuesClauseError
+from larql.exceptions import ValuesDuplicateVariableError, ValuesRowArityError
 
 
 class ValuesClauseValidator(lark.Visitor):
@@ -33,11 +33,9 @@ def _check_unique_variables(tree: lark.Tree) -> None:
     if duplicates := [
         variable for variable, count in Counter(variables).items() if count > 1
     ]:
-        msg = (
-            f"Expected unique variables in VALUES clause at line {tree.meta.line}. "
-            f"Got duplicates: {duplicates}."
+        raise ValuesDuplicateVariableError(
+            line=tree.meta.line, column=tree.meta.column, duplicates=duplicates
         )
-        raise ValuesClauseError(msg)
 
 
 def _get_variable_names(tree: lark.Tree) -> Iterator[str]:
@@ -54,11 +52,12 @@ def _check_row_arities(tree: lark.Tree) -> None:
 
     for row_arity in _get_row_arities(tree=tree):
         if row_arity != variable_count:
-            msg = (
-                f"Expected {variable_count} value(s) per row in VALUES clause "
-                f"at line {tree.meta.line}. Got a row with {row_arity}."
+            raise ValuesRowArityError(
+                line=tree.meta.line,
+                column=tree.meta.column,
+                expected=variable_count,
+                got=row_arity,
             )
-            raise ValuesClauseError(msg)
 
 
 def _get_row_arities(tree: lark.Tree) -> Iterator[int]:

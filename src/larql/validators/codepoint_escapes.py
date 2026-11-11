@@ -1,6 +1,6 @@
 import re
 from collections.abc import Iterator
-from typing import ClassVar
+from typing import ClassVar, cast
 
 import lark
 
@@ -71,13 +71,13 @@ class CodepointEscapeValidator(lark.Visitor):
 def _check_numeric_escapes(token: lark.Token) -> None:
     for escape, codepoint in _get_numeric_escapes(value=token.value):
         if not _is_unicode_scalar_value(codepoint=codepoint):
-            msg = (
-                "Expected numeric escape sequences to produce Unicode scalar values "
-                "(U+0000 to U+D7FF or U+E000 to U+10FFFF) "
-                f"at line {token.line}, column {token.column}. "
-                f"Got '{escape}'."
+            # lark types positions as optional for hand-built tokens;
+            # tokens produced by the lexer always carry them
+            raise CodepointEscapeError(
+                line=cast(int, token.line),
+                column=cast(int, token.column),
+                escape=escape,
             )
-            raise CodepointEscapeError(msg)
 
 
 def _get_numeric_escapes(value: str) -> Iterator[tuple[str, int]]:
