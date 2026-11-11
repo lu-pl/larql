@@ -2,12 +2,22 @@ from typing import NamedTuple
 
 import pytest
 
-from larql import parse
-from larql.exceptions import ValuesClauseError
+from larql import (
+    ValuesClauseError,
+    ValuesDuplicateVariableError,
+    ValuesRowArityError,
+    parse,
+)
 
 
 class ValuesClauseTestParameter(NamedTuple):
     query: str
+    comment: str = ""
+
+
+class ValuesClauseSadPathTestParameter(NamedTuple):
+    query: str
+    exception: type[ValuesClauseError]
     comment: str = ""
 
 
@@ -56,41 +66,50 @@ valid_params: list[ValuesClauseTestParameter] = [
     ),
 ]
 
-invalid_params: list[ValuesClauseTestParameter] = [
-    ValuesClauseTestParameter(
+invalid_params: list[ValuesClauseSadPathTestParameter] = [
+    ValuesClauseSadPathTestParameter(
         query="SELECT * WHERE { VALUES (?a ?b) { (1) (2) } }",
+        exception=ValuesRowArityError,
         comment="The total value count matches, but each row is too short.",
     ),
-    ValuesClauseTestParameter(
+    ValuesClauseSadPathTestParameter(
         query="SELECT * WHERE { VALUES (?a ?b) { (1 2) (3) } }",
+        exception=ValuesRowArityError,
         comment="Only a later row is too short.",
     ),
-    ValuesClauseTestParameter(
+    ValuesClauseSadPathTestParameter(
         query="SELECT * WHERE { VALUES (?a ?b) { (1 2 3) } }",
+        exception=ValuesRowArityError,
         comment="The row is too long.",
     ),
-    ValuesClauseTestParameter(
+    ValuesClauseSadPathTestParameter(
         query="SELECT * WHERE { VALUES (?a) { () } }",
+        exception=ValuesRowArityError,
         comment="An empty row doesn't match a non-empty variable list.",
     ),
-    ValuesClauseTestParameter(
+    ValuesClauseSadPathTestParameter(
         query="SELECT * WHERE { VALUES () { (1) } }",
+        exception=ValuesRowArityError,
         comment="A non-empty row doesn't match an empty variable list.",
     ),
-    ValuesClauseTestParameter(
+    ValuesClauseSadPathTestParameter(
         query="SELECT * WHERE { VALUES (?a ?a) { (1 1) } }",
+        exception=ValuesDuplicateVariableError,
         comment="The variable list contains a duplicate.",
     ),
-    ValuesClauseTestParameter(
+    ValuesClauseSadPathTestParameter(
         query="SELECT * WHERE { VALUES (?a $a) { (1 1) } }",
+        exception=ValuesDuplicateVariableError,
         comment="?a and $a denote the same variable, so this is a duplicate.",
     ),
-    ValuesClauseTestParameter(
+    ValuesClauseSadPathTestParameter(
         query="SELECT * WHERE { ?s ?p ?o } VALUES (?s) { (1 2) }",
+        exception=ValuesRowArityError,
         comment="A trailing VALUES clause is checked like an inline one.",
     ),
-    ValuesClauseTestParameter(
+    ValuesClauseSadPathTestParameter(
         query="SELECT * WHERE { { SELECT * WHERE { VALUES (?a) { (1 2) } } } }",
+        exception=ValuesRowArityError,
         comment="A VALUES clause inside a sub-SELECT is checked too.",
     ),
 ]
@@ -102,6 +121,8 @@ def test_values_clause_validator(param: ValuesClauseTestParameter) -> None:
 
 
 @pytest.mark.parametrize("param", invalid_params)
-def test_values_clause_validator_sad_path(param: ValuesClauseTestParameter) -> None:
-    with pytest.raises(ValuesClauseError):
+def test_values_clause_validator_sad_path(
+    param: ValuesClauseSadPathTestParameter,
+) -> None:
+    with pytest.raises(param.exception):
         parse(sparql=param.query)
