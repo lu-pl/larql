@@ -5,6 +5,7 @@ import lark
 from larql.exceptions import SPARQLSyntaxError
 from larql.validators.annotated_paths import AnnotatedPathValidator
 from larql.validators.codepoint_escapes import CodepointEscapeValidator
+from larql.validators.data_variables import DataVariableValidator
 from larql.validators.dispatcher import ConstraintValidator
 from larql.validators.values_clause import ValuesClauseValidator
 
@@ -20,6 +21,7 @@ _validator = ConstraintValidator(
     ValuesClauseValidator(),
     CodepointEscapeValidator(),
     AnnotatedPathValidator(),
+    DataVariableValidator(),
 )
 
 

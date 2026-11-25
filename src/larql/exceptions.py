@@ -13,6 +13,7 @@ lark.exceptions.LarkError
         │   └── ValuesRowArityError(line, column, expected, got)
         ├── CodepointEscapeError(line, column, escape)
         ├── AnnotatedPathError(line, column)
+        ├── DataVariableError(line, column, variable)
         └── ...
 
 Generally, subclasses take structured parameters, pass them unchanged
@@ -136,4 +137,22 @@ class AnnotatedPathError(SPARQLConstraintError):
             "as property of an annotated triple "
             f"at line {self.line}, column {self.column}. "
             "Got a path expression."
+        )
+
+
+class DataVariableError(SPARQLConstraintError):
+    """Exception for indicating variables in INSERT DATA or DELETE DATA operations."""
+
+    def __init__(self, line: int, column: int, variable: str) -> None:
+        self.line = line
+        self.column = column
+        self.variable = variable
+
+        super().__init__(line, column, variable)
+
+    def __str__(self) -> str:
+        return (
+            "Expected no variables in INSERT DATA or DELETE DATA "
+            f"at line {self.line}, column {self.column}. "
+            f"Got variable '{self.variable}'."
         )
