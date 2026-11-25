@@ -1,5 +1,6 @@
 from larql.exceptions import AnnotatedPathError as AnnotatedPathError
 from larql.exceptions import CodepointEscapeError as CodepointEscapeError
+from larql.exceptions import DataVariableError as DataVariableError
 from larql.exceptions import LarqlError as LarqlError
 from larql.exceptions import SPARQLConstraintError as SPARQLConstraintError
 from larql.exceptions import SPARQLSyntaxError as SPARQLSyntaxError
