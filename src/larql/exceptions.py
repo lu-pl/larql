@@ -14,6 +14,7 @@ lark.exceptions.LarkError
         ├── CodepointEscapeError(line, column, escape)
         ├── AnnotatedPathError(line, column)
         ├── DataVariableError(line, column, variable)
+        ├── DeleteBlankNodeError(line, column, syntax)
         └── ...
 
 Generally, subclasses take structured parameters, pass them unchanged
@@ -155,4 +156,22 @@ class DataVariableError(SPARQLConstraintError):
             "Expected no variables in INSERT DATA or DELETE DATA "
             f"at line {self.line}, column {self.column}. "
             f"Got variable '{self.variable}'."
+        )
+
+
+class DeleteBlankNodeError(SPARQLConstraintError):
+    """Exception for indicating blank node syntax in DELETE DATA, DELETE WHERE or DELETE templates."""
+
+    def __init__(self, line: int, column: int, syntax: str) -> None:
+        self.line = line
+        self.column = column
+        self.syntax = syntax
+
+        super().__init__(line, column, syntax)
+
+    def __str__(self) -> str:
+        return (
+            "Expected no blank nodes in DELETE DATA, DELETE WHERE or DELETE templates "
+            f"at line {self.line}, column {self.column}. "
+            f"Got {self.syntax}."
         )
